@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/arduino-light.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/arduino.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script> 
+<body style="background-color:pink;">
+
 
 <title>PS70: Intro to Digital Fabrication </title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="../style.css" rel="stylesheet">
 
 
-<nav class="navbar navbar-expand-sm navbar-dark" style=" color: #EEE7E8;">
+<nav class="navbar navbar-expand-sm navbar-dark" style=" background-color: pink;">
   <div style="align-items: center; justify-content: center;" class="container-fluid">
     <div class="flexrow">
       <h2 class="nav-title">PS70 Fall 2024</h2>
@@ -25,7 +31,36 @@
 
 <h3>Week 4: Microcontroller Programming</h3>
 
-<h4>[Do Something with an arduino]</h4>
+<h3.5>This week I used an arduino to allow me to control the speed of a motor with a dial (potentiometer)<h3.5>
+
+<img src=Circut_pic_2.jpg width = "250vw"> </img>
+<img src=circut_sketch.jpg width = "250vw"> </img>
+<p> The output from my potentiometer is connected to pin A1 on the arduino. I connected the ardunio to the motor driver through pin 5 <p><br>
+<p> Here is my code in Arduino IDE: <p>
+
+<pre><code class="language-arduino" style="background-color:white; > 
+void setup() {
+  Serial.begin(9600); // this sets up Serial.println
+  pinMode(A1,INPUT); // this tells the arduino to read the input from anagol pin 1
+}
+
+void loop() {
+ int banana = analogRead(A1); // this turns the input from A1 into an a variable that is an interger
+ Serial.println(banana); // this allows me to see what value of the banana integer is on my computer
+ int bananaOut = map(banana,1,1024,1,255); // the value of banana will be a number between 0-1024
+ // but the analogWrite function takes uses numbers between 1-255. map will give me a new variable 
+ //where the interger will always be between 1-225
+analogWrite (5,bananaOut); // the pin contected to the motor driver will send out an amount of voltage based
+//the size of the bananaOut variable
+}
+
+</code></pre>
+
+To control the speed of my motor with the potentionmeter, I had to take the voltage from the potentiometer and translate it into a number between 1-255. This number would then tell pin 5 how much voltage to send to the motor driver. Sending more voltage would make the motor go faster. <br><br>
+Here is a video of my dial in action! <p>
+<video width="640" height="480" controls>
+  <source src="dial_vid.mp4" type="video/mp4">
+</video>
 
 
 
