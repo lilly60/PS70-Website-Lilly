@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+<body style="background-color:pink;">
 
 <title>PS70: Intro to Digital Fabrication </title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="../style.css" rel="stylesheet">
 
 
-<nav class="navbar navbar-expand-sm navbar-dark" style=" color: #EEE7E8;">
+<nav class="navbar navbar-expand-sm navbar-dark" style=" background-color: pink;">
   <div style="align-items: center; justify-content: center;" class="container-fluid">
     <div class="flexrow">
       <h2 class="nav-title">PS70 Fall 2024</h2>
@@ -27,7 +28,110 @@
 
 <h4>Assignment 1: Capactive Sensor<h4>
 
-<h4>Assignment 2: [Use + Calibrate Another Sensor]</h4>
+  <img src=skematic.jpeg width = "400vw"> </img>
+  <p>I decided to make a capasitive touch sensor. I connected one plate to a pin that would send electircal curent and I connected the other plate to a pin that can measure how much current it is receiving. The dieletric material between the two plates effects how much charge the capasitor can hold. Water has a much higher dielectric constant than there. This property will allow my sensor to measure the level of water in a cup.<p><br>
+  <p> Here is the code I used <p>
+  <pre><code class="language-arduino" body style="background-color:pink;">
+long result;   //variable for the result of the tx_rx measurement.
+int analog_pin = A0;
+int tx_pin = 13;
+
+void setup() {
+    pinMode(tx_pin, OUTPUT);      //Pin 4 provides the voltage step
+    Serial.begin(9600);
+}
+
+void loop() {
+    result = tx_rx();
+    Serial.println(result);
+}
+
+
+long tx_rx(){         // Function to execute rx_tx algorithm and return a value
+                      // that depends on coupling of two electrodes.
+                      // Value returned is a long integer.
+  int read_high;
+  int read_low;
+  int diff;
+  long int sum;
+  int N_samples = 1000;    // Number of samples to take.  Larger number slows it down, but reduces scatter.
+
+  sum = 0;
+
+  for (int i = 0; i < N_samples; i++){
+   digitalWrite(tx_pin,HIGH);              // Step the voltage high on conductor 1.
+   read_high = analogRead(analog_pin);     // Measure response of conductor 2.
+   delayMicroseconds(100);                 // Delay to reach steady state.
+   digitalWrite(tx_pin,LOW);               // Step the voltage to zero on conductor 1.
+   read_low = analogRead(analog_pin);      // Measure response of conductor 2.
+   diff = read_high - read_low;            // desired answer is the difference between high and low.
+   sum += diff;                            // Sums up N_samples of these measurements.
+ }
+  return sum;
+}                                          // End of tx_rx function.
+</code></pre> 
+<br> <p> This allows me to average a 1000 vaules to get a smoother result to graph. I then tested what value my sensor would give me when filled with differnt amount of water.<p>
+  <img src=measurement.jpeg width = "400vw"> </img>
+  <p>Here are the results:<p>
+  <img src=table.png width = "400vw"> </img>
+  <img src=graph.png width = "400vw"> </img>
+  <p> The values flattened out after 150 mL because the water level had reached the top of the plates. The realtionship between the amount of water and the value of the sensor is not linear. There a big change when the first 30 mLs of water were added and a much smaller change when the last 30 mLs were added.<p>
+
+<h4>Assignment 2: Hall effect magnnetometer powered compass</h4>
+
+<img src=draw.jpeg width = "400vw"> </img> 
+<p> I used a magnetometer to measure the earth's magnetic field.<p> <br>
+  <p> Here is my code:<p>
+<pre><code class="language-arduino" style="background-color:pink"; > 
+const int hallPin = A0;
+int northPin = 2;
+int southPin = 3;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode (northPin,OUTPUT);
+  pinMode (southPin,OUTPUT);
+
+}
+
+void loop() {
+  float totalReading = 0.0;
+  for (int i = 0; i < 1000; i++)
+  {
+    totalReading += analogRead(hallPin);
+  }
+  float hallOutput = totalReading / 1000;
+  Serial.println(totalReading / 1000);
+
+if (hallOutput > 507.65){
+digitalWrite(northPin, HIGH);
+}
+
+else{
+digitalWrite(northPin, LOW);
+}
+if (hallOutput < 507.35){
+digitalWrite(southPin, HIGH);
+}
+
+else{
+digitalWrite(southPin, LOW);
+}
+
+
+
+}
+
+</code></pre>
+<p> The sensor ended up being very finicky and hard to deal with. The first thing I had to do was to was to make be floating piont numbers so that they could have decimals. I was not able to measure any difference when just using intergers becuase the earth's magentic field is relativly weak compared to a close by magnet. The values read by my magnetometer would change based on how high above the ground it was and whether it was oriented up or down. To fix these issues in this protype I kept it fixed in place. The one thing that remained constanstant no matter where the magnetometer was that north was always the higest value and south was the lowest value.<p><br>
+<p> Here is a video of my compass in action:<p> 
+
+<video width="640" height="480" controls>
+  <source src="video.mp4" type="video/mp4">
+</video>video
+
+<p> The red LED light indicates magentic north and the white LED light indicated magentic south. It is important to note that in Boston magnetic north is about 15 degrees west of true north. This would need to be acounted for if I wanted to make a sensor which could tell me the direction of true north.<p>
+
 
 </div>
 </xmp>
